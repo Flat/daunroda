@@ -25,7 +25,7 @@ func request(booru string, tags string, rating string, page int, count int) XMLP
 	switch booru {
 	case "konachan":
 		url = "http://konachan.com/post.xml?"
-		params = fmt.Sprintf("tags=%s&rating=%s&page=%d&limit=%d", tags, rating, page, count)
+		params = fmt.Sprintf("tags=%s%%20rating%%3a%s&page=%d&limit=%d", tags, rating, page, count)
 	default:
 		log.Fatal("Unsupported booru selected.")
 	}

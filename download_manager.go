@@ -23,9 +23,9 @@ func download(url string, md5String string, id string, outDir string) {
 		log.Fatal(err.Error())
 	}
 	defer resp.Body.Close()
-	bar := ioprogress.DrawTextFormatBar(50)
+	bar := ioprogress.DrawTextFormatBar(20)
 	myDrawFunc := ioprogress.DrawTerminalf(os.Stdout, func(progress, total int64) string {
-		return fmt.Sprintf("%s %s %30s", filename, bar(progress, total), ioprogress.DrawTextFormatBytes(progress, total))
+		return fmt.Sprintf("%s %s %20s", filename, bar(progress, total), ioprogress.DrawTextFormatBytes(progress, total))
 	})
 
 	progress := &ioprogress.Reader{
