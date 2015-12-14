@@ -20,7 +20,7 @@ COMMANDS:
 GLOBAL OPTIONS: | Description
 ------------ | -------------
    -b, --booru                                                                  |booru to download from. (Required)
-   -o, --output "C:\Users\Kenneth\Documents\Repos\src\github.com\flat\daunroda" |output directory
+   -o, --output "./" |output directory
    -r, --rating "safe"                                                          |image rating(s) to include. Valid values: safe, questionable, explicit or any '+' delimited combination. (e.g. -r safe OR -r safe+questionable)
    -p, --page "0"                                                               |page to download from.
    -c, --count "20"                                                             |number of images to download. (Max: 100)
