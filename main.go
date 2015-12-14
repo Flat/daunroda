@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/cli"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "b, booru",
-			Usage:       "booru to download from. (Required)",
+			Usage:       "booru to download from. Valid options: konachan (Required)",
 			Destination: &booru,
 		},
 		cli.StringFlag{
@@ -75,10 +75,8 @@ func main() {
 		}
 		tagString := strings.Join(tags, "+")
 		p := request(booru, tagString, rating, page, count)
-		fmt.Println(p[0])
-		for _, image := range p {
-			fmt.Print(image.fileURL)
-			download(image.fileURL, image.md5, output)
+		for _, image := range p.Post {
+			download(image.FileURL, image.Md5, strconv.Itoa(image.Id), output)
 		}
 
 	}
