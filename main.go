@@ -18,7 +18,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "daunroda"
 	app.Usage = "A simple command line booru mass image downloader. Arguments accepted are tags for images to download."
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "Ken Swenson (flat)",
