@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type XMLPost struct {
@@ -22,10 +23,36 @@ type XMLPosts struct {
 func request(booru string, tags string, rating string, page int, count int) XMLPosts {
 	var url string
 	var params string
+	ratings := strings.Split(rating, "+")
 	switch booru {
 	case "konachan":
+		safe, questionable, explicit := false, false, false
+		for _, x := range ratings {
+			if x == "safe" {
+				safe = true
+			} else if x == "questionable" {
+				questionable = true
+			} else if x == "explicit" {
+				explicit = true
+			}
+		}
+		if safe && questionable && explicit {
+			rating = ""
+		} else if safe && questionable && !explicit {
+			rating = "%20rating%3aquestionableless"
+		} else if safe && !questionable && !explicit {
+			rating = "%20rating%3asafe"
+		} else if !safe && questionable && !explicit {
+			rating = "%20rating%3aquestionable"
+		} else if !safe && !questionable && explicit {
+			rating = "%20rating%3aexplicit"
+		} else if !safe && questionable && explicit {
+			rating = "%20rating%3aquestionableplus"
+		} else if safe && !questionable && explicit {
+			log.Fatal("safe+explicit not a valid combination.")
+		}
 		url = "http://konachan.com/post.xml?"
-		params = fmt.Sprintf("tags=%s%%20rating%%3a%s&page=%d&limit=%d", tags, rating, page, count)
+		params = fmt.Sprintf("tags=%s%s&page=%d&limit=%d", tags, rating, page, count)
 	default:
 		log.Fatal("Unsupported booru selected.")
 	}
