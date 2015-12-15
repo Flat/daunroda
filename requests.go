@@ -20,7 +20,7 @@ type XMLPosts struct {
 	Post    []XMLPost `xml:"post"`
 }
 
-func request(booru string, tags string, rating string, page int, count int) XMLPosts {
+func request(booru string, tags string, rating string, page int, count int, user string, apikey string) XMLPosts {
 	var url string
 	var params string
 	ratings := strings.Split(rating, "+")
@@ -51,8 +51,47 @@ func request(booru string, tags string, rating string, page int, count int) XMLP
 		} else if safe && !questionable && explicit {
 			log.Fatal("safe+explicit not a valid combination.")
 		}
-		url = "http://konachan.com/post.xml?"
+		url = "https://konachan.com/post.xml?"
 		params = fmt.Sprintf("tags=%s%s&page=%d&limit=%d", tags, rating, page, count)
+	case "yandere":
+		safe, questionable, explicit := false, false, false
+		for _, x := range ratings {
+			if x == "safe" {
+				safe = true
+			} else if x == "questionable" {
+				questionable = true
+			} else if x == "explicit" {
+				explicit = true
+			}
+		}
+		if safe && questionable && explicit {
+			rating = ""
+		} else if safe && questionable && !explicit {
+			rating = "%20-rating%3aexplicit"
+		} else if safe && !questionable && !explicit {
+			rating = "%20rating%3asafe"
+		} else if !safe && questionable && !explicit {
+			rating = "%20rating%3aquestionable"
+		} else if !safe && !questionable && explicit {
+			rating = "%20rating%3aexplicit"
+		} else if !safe && questionable && explicit {
+			rating = "%20-rating%3asafe"
+		} else if safe && !questionable && explicit {
+			log.Fatal("safe+explicit not a valid combination.")
+		}
+		if user != "" {
+			user = fmt.Sprintf("&login=%s", user)
+		}
+		if apikey != "" {
+			apikey = fmt.Sprintf("&api_key=%s", apikey)
+		}
+		if apikey == "" && user != "" {
+			log.Fatal("api-key is required if username given.")
+		} else if apikey != "" && user == "" {
+			log.Fatal("user is required if api-key is given")
+		}
+		url = "https://yande.re/post.xml?"
+		params = fmt.Sprintf("tags=%s%s&page=%d&limit=%d%s%s", tags, rating, page, count, user, apikey)
 	default:
 		log.Fatal("Unsupported booru selected.")
 	}

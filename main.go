@@ -11,6 +11,8 @@ func main() {
 	var booru string
 	var output string
 	var rating string
+	var apikey string
+	var user string
 	var page int
 	var count int
 	var id int
@@ -18,7 +20,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "daunroda"
 	app.Usage = "A simple command line booru mass image downloader. Arguments accepted are tags for images to download."
-	app.Version = "0.0.2"
+	app.Version = "0.0.3"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "Ken Swenson (flat)",
@@ -60,6 +62,18 @@ func main() {
 			Usage:       "single image id to download",
 			Destination: &id,
 		},
+		cli.StringFlag{
+			Name:        "u, user",
+			Usage:       "username (Currently only yandere)",
+			Value:       "",
+			Destination: &user,
+		},
+		cli.StringFlag{
+			Name:        "password, api-key",
+			Usage:       "API key to auth with (Currently only yandere)",
+			Value:       "",
+			Destination: &apikey,
+		},
 	}
 	app.Action = func(c *cli.Context) {
 		var tags = make([]string, len(c.Args()))
@@ -74,7 +88,7 @@ func main() {
 			os.Exit(1)
 		}
 		tagString := strings.Join(tags, "+")
-		p := request(booru, tagString, rating, page, count)
+		p := request(booru, tagString, rating, page, count, user, apikey)
 		for _, image := range p.Post {
 			download(image.FileURL, image.Md5, strconv.Itoa(image.Id), output)
 		}
